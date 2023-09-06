@@ -2,7 +2,7 @@
 
 # ByteIR
 
-The [ByteIR](https://bytedance.github.io/byteir) site is built with [Hugo](https://gohugo.io/) and hosted on [Github Pages](https://pages.github.com/).
+The [ByteIR](https://bytedance.github.io/byteirWeb) site is built with [Hugo](https://gohugo.io/) and hosted on [Github Pages](https://pages.github.com/).
 
 ## Prerequisites
 
