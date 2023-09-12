@@ -1,38 +1,38 @@
 
-project_short_desc = "项目的简短描述"
+project_short_desc = "字节跳动的模型编译解决方案"
 
-project_short_desc_en = "This is a short description content"
+project_short_desc_en = "ByteDance model compilation solution"
 
-why_choose_this = "请描述项目的优势和亮点"
+why_choose_this = "ByteIR包括前端、编译器和运行时，并提供端到端的模型编译解决方案。"
 
-why_choose_this_en = "Please write the project highlights and features in here."
+why_choose_this_en = "ByteIR includes frontends, compiler, and runtime, and provides an end-to-end model compilation solution."
 
 # 项目优势和特点（中文）
 [[features]]
-feature = "特征1"
-feature_desc = "特征1的简要描述内容"
+feature = "最先进的模型"
+feature_desc = "ByteIR会负责维护前端模型转换到Mhlo，并且提供模型库方便科研和测试。"
 
 [[features]]
-feature = "特征2"
-feature_desc = "特征2的简要描述内容"
+feature = "方便好用"
+feature_desc = "ByteIR直接使用上游MLIR方言和Google Mhlo，为编译器提供兼容的passes和基础设施。允许混合使用passes去建构编译器，这包括ByteIR，上游MLIR方言，Mhlo或是自己写的passes。"
 
 [[features]]
-feature = "特征3"
-feature_desc = "特征3的简要描述内容"
+feature = "新硬件支持"
+feature_desc = "ByteIR提供大量Mhlo和Linalg方言的图优化，Loop优化，或者张量优化，新硬件编译器可以复用，大大化简编译器开发。"
 
 
 # 项目优势和特点（英文）
 [[features_en]]
-feature = "Project_Feature_One"
-feature_desc = "Project_Feature_One_Desc"
+feature = "Enjoy SOTA models"
+feature_desc = "ByteIR maintains the popular frontends to handle lowering many SOTA models into Mhlo, and also provides a model zoo for research or benchmarking purposes."
 
 [[features_en]]
-feature = "Project_Feature_Two"
-feature_desc = "Project_Feature_Two_Desc"
+feature = "Just work"
+feature_desc = "ByteIR adopts upstream MLIR dialects and Google Mhlo, and provides compatible passes, utilities, and infrastructure for all compiler builders using upstream MLIR. You can mix using ByteIR passes with upstream MLIR or Mhlo passes, or even your own passes to build your pipeline."
 
 [[features_en]]
-feature = "Project_Feature_Three"
-feature_desc = "Project_Feature_Three_Desc"
+feature = "Bring your own architecture"
+feature_desc = "ByteIR provides rich generic graph-, loop-, tensor-level, optimizations in Mhlo and Linalg, which allow DL ASIC compilers to reuse, and focus only on the last mile for their backends."
 
 # 原理图地址
 how_it_work_href = ""
