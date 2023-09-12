@@ -4,7 +4,7 @@
 {{ $type   := .Get "type" | default "" }}
 {{ $_class  := .Get "class" | default "" }}
 {{ $info_source := .Get "info" | default "custom" }}
-{{ $icon := .Get "icon" | default "fab" }}
+{{ $icon := .Get "icon" | default "fa-lightbulb" }}
 {{ $lang := .Site.Language.Lang }}
 {{ $how_it_works_href := .Site.Data.overview.how_it_work_href }}
 {{ $feature := (cond (eq $lang "en") .Site.Data.overview.features_en .Site.Data.overview.features)}}
