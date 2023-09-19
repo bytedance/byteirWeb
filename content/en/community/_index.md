@@ -38,6 +38,16 @@ menu:
         </a>
         Chat with other ByteIR users by Lark
       </li>
+      <li>
+        <a
+          target="_blank"
+          rel="noopener"
+          href="https://discord.gg/hnuNZTk7"
+        >
+          <i class="fab fa-discord"></i> Discord:
+        </a>
+        Chat with other ByteIR users on Discord
+      </li>
     </ul>
   </div>
 
