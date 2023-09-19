@@ -1,8 +1,8 @@
 ---
-title: "Advanced Feature"
-linkTitle: "Advanced Feature"
+title: "Advanced Tutorials"
+linkTitle: "Advanced Tutorials"
 weight: 4
-date: 2021-08-31
+date: 2023-01-01
 description: >
 
 ---
