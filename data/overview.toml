@@ -7,6 +7,9 @@ why_choose_this = "ByteIR提供端到端的模型编译解决方案，包括前�
 
 why_choose_this_en = "ByteIR is an end-to-end model compilation solution, including frontends, compiler, and runtime, and provides a high-performance execution and a great user experience."
 
+# 原理图地址
+how_it_work_href = '/img/how_it_works.png'
+
 # 项目优势和特点（中文）
 [[features]]
 feature = "最先进的模型"
@@ -34,9 +37,6 @@ feature_desc = "ByteIR adopts upstream MLIR dialects and Google Mhlo, and provid
 feature = "Bring your own architecture"
 feature_desc = "ByteIR provides rich generic graph-, loop-, tensor-level, optimizations in Mhlo and Linalg, which allow DL ASIC compilers to reuse, and focus only on the last mile for their backends."
 
-# 原理图地址
-how_it_work_href = ""
-
 # 出品方信息
 [[created_by_info]]
 href = '/'
@@ -60,24 +60,24 @@ imgSrc = '/img/usedby/xigua.png'
 alt = 'xigua logo'
 
 [[used_by_info]]
-href = 'https://www.dongchedi.com/'
-imgSrc = '/img/usedby/dongchedi.png'
-alt = 'dongchedi logo'
+href = 'https://bytemlperf.ai/'
+imgSrc = '/img/usedby/bytemlperf.png'
+alt = 'bytemlperf logo'
 
-[[used_by_info]]
-href = 'https://www.capcut.cn/'
-imgSrc = '/img/usedby/jianying.png'
-alt = 'jianying logo'
-
-[[used_by_info]]
-href = 'https://fanqienovel.com/'
-imgSrc = '/img/usedby/fanqie.png'
-alt = 'fanqie logo'
-
-[[used_by_info]]
-href = 'https://www.feishu.cn/'
-imgSrc = '/img/usedby/feishu.png'
-alt = 'feishu logo'
+# [[used_by_info]]
+# href = 'https://www.capcut.cn/'
+# imgSrc = '/img/usedby/jianying.png'
+# alt = 'jianying logo'
+# 
+# [[used_by_info]]
+# href = 'https://fanqienovel.com/'
+# imgSrc = '/img/usedby/fanqie.png'
+# alt = 'fanqie logo'
+# 
+# [[used_by_info]]
+# href = 'https://www.feishu.cn/'
+# imgSrc = '/img/usedby/feishu.png'
+# alt = 'feishu logo'
 
 # 底部展示文档内容
 [[docs_info]]

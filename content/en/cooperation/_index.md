@@ -23,6 +23,18 @@ Project Introduction Little Blue Book &nbsp&nbsp
 
 <div class="container l-container--padded">
   <div style="height: 200px; padding: 15px;">
-  description content description content description content description content description content description content
+  <table cellspacing="10">
+    <tr>
+      <th>
+        <a class="home-used-by-item" href="https://bytemlperf.ai/" target="_blank" rel="noopener">
+            <img class="used-by-logo" src="/img/usedby/bytemlperf.png" alt="{{ .alt }}">
+        </a>
+      </th>
+      <th>
+          Byte MLPerf(Inference) is an AI Accelerator Benchmark that focuses on evaluating AI Accelerators from practical production perspective, including the ease of use and versatility of software and hardware. In their Model Zoo, they have included models supported by ByteIR. For more information, please refer to <a href="https://bytemlperf.ai">Byte MLPerf</a>. 
+      </th>
+    </tr>
+  </table>
   </div>
 </div>
+
