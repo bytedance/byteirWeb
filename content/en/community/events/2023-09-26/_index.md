@@ -8,7 +8,7 @@ description: >
 ---
 
 On 9/28/2023 (9am California Time, 16:00 UTC), 
-ByteIR will present a proposal on \[RFC\] Sharding Framework Design for Device Mesh.
+Chengji Yao will represent the ByteIR team to present a proposal on \[RFC\] Sharding Framework Design for Device Mesh.
 
 
 More details:
