@@ -1,13 +1,15 @@
 ---
 title: "Open MLIR Meeting 9/28/2023: [RFC] Sharding Framework Design for Device Mesh"
-date: 2023-09-28
-weight: 2
+linkTitle:  Open MLIR Meeting 9/28/2023
+date: 2023-09-21
 keywords: ["MLIR Open Meeting", "ByteIR"]
-description: 
+weight: 1
+description: >
 ---
 
 On 9/28/2023 (9am California Time, 16:00 UTC), 
 ByteIR will present a proposal on \[RFC\] Sharding Framework Design for Device Mesh.
+
 
 More details:
 https://discourse.llvm.org/t/open-mlir-meeting-9-28-2023-rfc-sharding-framework-design-for-device-mesh/73695

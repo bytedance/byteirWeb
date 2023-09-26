@@ -1,8 +1,9 @@
 ---
 title: "Event"
 linkTitle: "Event"
-weight: 1
+weight: 20
+menu:
+  main:
+    weight: 20
+    parent: "Community"
 ---
-
-
-tests
