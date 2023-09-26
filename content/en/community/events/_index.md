@@ -5,5 +5,5 @@ weight: 20
 menu:
   main:
     weight: 20
-    parent: "Community"
+description: "ByteIR-related Community Events"
 ---
