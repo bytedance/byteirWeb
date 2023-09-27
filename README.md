@@ -30,9 +30,3 @@ See also the list of [contributors](https://github.com/bytedance/byteir/graphs/c
 This project is licensed under the Apache License 2.0 - see the [LICENSE.md](https://github.com/bytedance/byteir/blob/main/LICENSE) file for details
 
 This project is overridden from [docsy](http://github.com/google/docsy), and we're not tracking changes to the docsy base file.
-
-## Credits
-
-The website is deployed on [Vercel](https://vercel.com/?utm_source=Project_Name&utm_campaign=oss).
-
-![Vercel](https://images.ctfassets.net/e5382hct74si/78Olo8EZRdUlcDUFQvnzG7/fa4cdb6dc04c40fceac194134788a0e2/1618983297-powered-by-vercel.svg)
