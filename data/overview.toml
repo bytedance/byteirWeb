@@ -1,7 +1,7 @@
 
 project_short_desc = "字节跳动的端到端模型编译解决方案"
 
-project_short_desc_en = "ByteDance's end-to-end model compilation solution"
+project_short_desc_en = "ByteDance's End-to-end Model Compilation Solution"
 
 why_choose_this = "ByteIR提供端到端的模型编译解决方案，包括前端、编译器和运行时。并且保证了高性能的运行从而达到好的用户体验。"
 

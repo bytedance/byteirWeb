@@ -13,7 +13,7 @@ Project Introduction Little Blue Book &nbsp&nbsp
 <a id="file_download_bluebook" href="https://github.com/Project_Name/community/raw/main/Project_Name_BlueBook_Project_Introduction.pdf"><i class="fas fa-download"></i></a>
 </p> -->
 
-<p class="lead mt-5">ByteIR User practice case sharing</p>
+<p class="lead mt-5">ByteIR User Practice Case Sharing</p>
 
 <div class="container l-container--padded">
 
