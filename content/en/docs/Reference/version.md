@@ -6,4 +6,4 @@ keywords: ["Version Release", "Semantic Versioning"]
 description: "Release conventions."
 ---
 
-XXXX
+[1.4.0](https://github.com/bytedance/byteir/releases/tag/v1.4.0)
