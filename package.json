@@ -27,7 +27,7 @@
     "chalk": "^5.3.0",
     "jsonc-parser": "^3.2.0",
     "markdownlint": "^0.29.0",
-    "postcss": "^8.4.26",
+    "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
     "simple-git-hooks": "^2.8.1"
   }
