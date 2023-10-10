@@ -1,13 +1,14 @@
 {{ with .Site.Params.algolia_docsearch }}
 <!-- scripts for algolia docsearch -->
-<script src="/js/docsearch.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
 
 <script type="text/javascript">
   let siteLang = window.location.pathname.startsWith('/zh/') ? 'zh' : 'en';
   docsearch({
-    appId: 'V7I042F992',
-    apiKey: '8380a7ac88106841cb43fb000fa2edb4',
-    indexName: 'Project_Name',
+    appId: 'K5B5JISBQS',
+    apiKey: 'ee10471e99b67059dbdeb564b4a94d93',
+    indexName: 'byteir',
+    insights: true,
     container: '#docsearch',
     searchParameters: {
       hitsPerPage: 5,
