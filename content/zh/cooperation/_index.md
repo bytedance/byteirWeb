@@ -18,9 +18,19 @@ ByteIR 项目介绍小蓝书 &nbsp&nbsp
 
 <div class="container l-container--padded">
   <div style="height: 200px; padding: 15px;">
-  介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容介绍内容
+  <table cellspacing="10">
+    <tr>
+      <th>
+        <a class="home-used-by-item" href="https://bytemlperf.ai/" target="_blank" rel="noopener">
+            <img class="used-by-logo" src="/img/usedby/bytemlperf.png" alt="{{ .alt }}">
+        </a>
+      </th>
+      <th>
+          Byte MLPerf(推理) 是一个AI加速器基准，专注于从实际生产的角度评估AI加速器，包括软件和硬件的易用性和通用性。在他们的模型库中，他们已经包含了ByteIR支持的模型。有关更多信息，请参阅 <a href="https://bytemlperf.ai">Byte MLPerf</a>.
+      </th>
+    </tr>
+  </table>
   </div>
 </div>
-
 
 

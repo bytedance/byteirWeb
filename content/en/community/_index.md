@@ -77,7 +77,7 @@ menu:
       </li> -->
     </ul>
     <p>
-      You can find out how to contribute to these docs in our <a href="https://github.com/bytedance/byteir/blob/main/CONTRIBUTORS.md">Contribution Guidelines</a>.
+      You can find out how to contribute to ByteIR in our <a href="https://github.com/bytedance/byteir/blob/main/CONTRIBUTORS.md">Contribution Guidelines</a>.
     </p>
   </div>
 
