@@ -6,15 +6,15 @@ menu:
 ---
 
 <span class="h5 mb-0">
-  <h1>欢迎来到ByteIR社区</h1>
-  <p>ByteIR是一个开源项目，社区中的任何人都可以使用和改进。我们希望您加入我们！以下是一些了解近况并参与其中的途径。</p>
+  <h1>欢迎来到 ByteIR 社区</h1>
+  <p>ByteIR 是一个开源项目，社区中的任何人都可以使用和改进。我们希望您加入我们！以下是一些了解近况并参与其中的途径。</p>
 </span>
 
 <section class="row td-box td-box--white td-box--height-auto linkbox">
 
   <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <h2>学习与联系</h2>
-    <p>正在使用或想要使用ByteIR? 来这里发现更多:</p>
+    <p>正在使用或想要使用 ByteIR? 来这里发现更多:</p>
     <ul>
       <li title="X">
         <a
@@ -24,7 +24,7 @@ menu:
         >
           <i class="fab fa-twitter"></i> X:
         </a>
-        在X上关注我们获取最新信息！
+        在 X 上关注我们获取最新信息！
       </li>
       <li title="Lark">
         <a
@@ -34,7 +34,7 @@ menu:
         >
           <i class="fab fa-lark"></i> 飞书:
         </a>
-        在飞书上与其他ByteIR用户交流
+        在飞书上与其他 ByteIR 用户交流
       </li>
       <li>
         <a
@@ -44,14 +44,14 @@ menu:
         >
           <i class="fab fa-discord"></i> Discord:
         </a>
-        在Discord上与其他ByteIR用户交流
+        在 Discord 上与其他 ByteIR 用户交流
       </li>
     </ul>
   </div>
 
   <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <h2>开发与贡献</h2>
-    <p>如果你想要更进一步参与或者为ByteIR贡献代码, 在这里加入我们:</p>
+    <p>如果你想要更进一步参与或者为 ByteIR 贡献代码, 在这里加入我们:</p>
     <ul>
       <li title="GitHub">
         <a
@@ -75,7 +75,7 @@ menu:
       </li> -->
     </ul>
     <p>
-      您能够在我们的<a href="https://github.com/bytedance/byteir/blob/main/CONTRIBUTORS.md">贡献指南</a>中了解如何向ByteIR贡献代码。
+      您能够在我们的<a href="https://github.com/bytedance/byteir/blob/main/CONTRIBUTORS.md">贡献指南</a>中了解如何向 ByteIR 贡献代码。
     </p>
   </div>
 
