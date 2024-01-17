@@ -1,25 +1,25 @@
 ---
-title: "GPU Support"
+title: "GPU 支持"
 date: 2023-09-04
 weight: 6
 keywords: ["GPU"]
-description: 
+description:
 ---
 
-ByteIR Compiler currently has limited support for NVIDIA GPU.
+ByteIR 编译器目前对 NVIDIA GPU 提供有限支持。
 
 ## Passes
 
-The major route from mhlo to GPU backends is through mhlo dialect, linalg-tensor dialect, linalg-memref dialect, affine/scf dialect, gpu dialect. 
-The first half, from mhlo to affine/scf dialect, is similar across backends. 
-Therefore, we only discuss the second half, from affine/scf dialect to gpu dialect, later.
-ByteIR Compiler has developed multiple passes to support GPU backends. 
+从 mhlo 到 GPU 后端的主要途径是通过 mhlo 方言、linalg-tenor 方言、linalg-memref 方言、affine/scf 方言、gpu 方言。
+前半部分，从 mhlo 到 affine/scf 方言，在不同后端之间是相似的。
+因此，我们只讨论后半部分，从 affine/scf 方言到 gpu 方言。
+ByteIR 编译器开发了多种 Pass 来支持 GPU 后端。
 
 ### InsertTrivialSCFLoop Pass
 
-This pass simply inserts a trivial scf ForOp for scalar computation.
-It is typically used to simplify a pass pipeline without checking whether scalar computation later. 
-Note the effect of this pass will be removed after the scf canonicalizer.  
+这个 pass 只是插入一个简单的 scf ForOp 用于标量计算。
+它通常用于简化 pass 流程，而无需稍后检查是否进行标量计算。
+注意，在 scf 规范化之后，此 pass 的效果将被移除。
 
 ```
 // input.mlir
@@ -53,8 +53,9 @@ func.func @scalar_func(%arg0: memref<f32>) -> memref<f32> {
 ```
 
 ### ConvertFuncToGPU Pass
-This pass convert a FuncOp in a loop form into a GPUFuncOp in a SIMT form. 
-Some loops with annotation in the source FuncOp are transformed into a SIMT statement. 
+
+这个 Pass 将循环形式的 FuncOp 转换为 SIMT 形式的 GPUFuncOp。
+源 FuncOp 中带有注解的一些循环被转换为 SIMT 语句。
 
 ```
 // input.mlir
@@ -107,18 +108,18 @@ func.func private @matmul_tiled(%arg0: memref<128x64xf32>, %arg1: memref<64x64xf
 }
 ```
 
-## Backend Target
+## 后端目标
 
-ByteIR Compiler supports NVIDIA GPU backends through either LLVM PTX codegen or a CUDA C source code emitter. 
+ByteIR 编译器要么通过 LLVM PTX 代码生成，要么通过 CUDA C 源代码触发器支持 NVIDIA GPU 后端。
 
-Other targets, such as cubin codegen, will be the future work. 
+其他的后端目标, 例如 cubin 代码生成, 将是我们未来的工作。
 
-### LLVM PTX codegen
+### LLVM PTX 代码生成
 
-LLVM PTX codegen lowers GPU dialect into LLVM/NVVM dialect, and then translates LLVM/NVVM dialect to PTX using LLVM PTX backend. 
-The first step relies on a common pipeline `NVVMCodegenPipeline`, while the second step uses `byteir-translate` with a `gen-ptx` option.
+LLVM PTX 代码生成将 GPU 方言递降为 LLVM/NVVM 方言, 然后将 LLVM/NVVM 方言通过 LLVM PTX 后端翻译为 PTX。
+第一步依赖于一个通用的流水线 `NVVMCodegenPipeline`, 第二步使用带有 `gen-ptx` 选项的 `byteir-translate`。
 
-### CUDA emitter
+### CUDA 触发器
 
-CUDA emitter directly translates GPU dialect to CUDA C source code using `byteir-translate` with an `emit-cuda` option.
+CUDA 触发器直接通过带有 `emit-cuda` 选项的 `byteir-translate` 将 GPU 方言翻译为 CUDA C 源码。
 

@@ -26,7 +26,7 @@ ByteIR 项目介绍小蓝书 &nbsp&nbsp
         </a>
       </th>
       <th>
-          Byte MLPerf(推理) 是一个 AI 加速器基准，专注于从实际生产的角度评估 AI 加速器，包括软件和硬件的易用性和通用性。在他们的模型库中，他们已经包含了 ByteIR 支持的模型。有关更多信息，请参阅 <a href="https://bytemlperf.ai">Byte MLPerf</a>.
+          Byte MLPerf(推理) 是一个 AI 加速器基准，专注于从实际生产的角度评估 AI 加速器，包括软件和硬件的易用性和通用性。在他们的模型库中，他们已经包含了 ByteIR 支持的模型。有关更多信息，请参阅 <a href="https://bytemlperf.ai">Byte MLPerf</a>。
       </th>
     </tr>
   </table>

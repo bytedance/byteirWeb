@@ -10,7 +10,7 @@ description:
 
 ## Flash attention 示例
 在这里，我们演示如何在一个常规的 self attention 中实现 [flash attention](https://arxiv.org/abs/2205.14135)。
-In ByteIR, flash attention can be reached from a regular self attention presenting in linalg or linalg-ext ops, such as `matmul` and `softmax`, through just linalg-ext `fuse transformation` of  with proper tiling parameters, proper `tile_sizes` to fully utilize on-chip memory and `tile_interchange` of [2, 1, 0].
+在ByteIR中，flash attention 可以通过由 linalg 或 linalg-ext 算子（如 `matmul` 和 `softmax` ）表示的常规的 self attention 来实现，只需使用适当的分块参数、适当的 `tile_sizes` 来充分利用片上内存、以及[2,1,0]的 `tile_interchange` 进行 linalg-ext 的 `fuse transformation`。
 
 ```
 // input.mlir
@@ -80,7 +80,7 @@ func.func @dot_attention(%arg0: tensor<1024x32xf32>, %arg1: tensor<32x512xf32>, 
 
 ```
 
-And multi-head attention is also supported.
+并且我们也支持多头注意力 （multi-head attention）。
 ```
 // input.mlir
 func.func @fuse_multihead_attention(%arg0: tensor<128x16x1024x32xf32>, %arg1: tensor<128x16x32x512xf32>, %arg2: tensor<128x16x512x32xf32>) -> tensor<128x16x1024x32xf32> {
@@ -153,7 +153,7 @@ func.func @fuse_multihead_attention(%arg0: tensor<128x16x1024x32xf32>, %arg1: te
 }
 ```
 
-## Multi-head attention example with tiling on 3 dimensions
+## 三维分块的多头注意力的示例
 
 ```
 // input.mlir
@@ -236,9 +236,9 @@ func.func @fuse_multihead_attention_tile_3d(%arg0: tensor<128x16x1024x32xf32>, %
 }
 ```
 
-## Split-head attention with prologue
+## 带有序言的分头注意力 （Split-head attention with prologue）
 
-support split-head attention, see https://arxiv.org/abs/1909.08053
+支持分头注意力, 参考 https://arxiv.org/abs/1909.08053
 
 ```
 // input.mlir
@@ -341,8 +341,8 @@ func.func @multihead_attention_with_prologue_proj(%arg0: tensor<4x1024x512xf32>,
   }
 ```
 
-## Split-head multi-query-attention
-see https://arxiv.org/pdf/1911.02150.pdf
+## 分头多查询注意力 （Split-head multi-query-attention）
+参考 https://arxiv.org/pdf/1911.02150.pdf
 ```
 // input.mlir
 // batch size = 4

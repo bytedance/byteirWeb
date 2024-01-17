@@ -1,183 +1,180 @@
 ---
-title: "ByteIR Additional Ops"
+title: "ByteIR 附加算子"
 date: 2023-09-04
 weight: 6
-keywords: ["Custom Op"]
-description: 
+keywords: ["自定义算子"]
+description:
 ---
 
-ByteIR compiler introduces several coarse-grained ops to improve pattern-matching rewriting during compilation.
-ByteIR implements in the way of re-using mhlo custom call op definition with a ByteIR prefix in `call_target_name`, 
-instead of defining another new dialect.
-ByteIR implements this conversion in frontends, instead of putting it to ByteIR compiler.
+ByteIR 编译器引入了几个粗粒度的算子来提升编译过程中的模式匹配重写。
+ByteIR 通过复用mhlo自定义算子定义的方式实现，它们在call_target_name中带有ByteIR前缀。而不是定义另一种新方言。
+ByteIR 在前端实现了这种转换，而不是将其放在 ByteIR 编译器中。
 
-## Rationales 
-### Need of coarse-grained ops
+## 理由
+### 对于粗粒度算子的需要
 
-Introduction of coarse-grained ops can provide several benefits as follows, 
-* it simplifies pattern-matching processes during rewriting regardless of optimization or lowering;
-* it allows high-level information to be encoded with coarse-grained ops, helping optimization;
-* it provides intuitive mapping from frontends to IR, helping debuggability;
-* it provides flexible control, since coarse-grained ops can be easily decomposed to fine-grained ops, the other way around is much harder.
+引入粗粒度的算子可以提供如下几个好处，
+* 无论优化或递降，它都简化了重写期间的模式匹配过程。
+* 它允许使用粗粒度的操作对上层信息进行编码，有助于优化；
+* 它提供了从前端到中间表示的直观映射，有助于可调试性；
+* 它提供了灵活的控制，因为粗粒度的操作可以很容易地分解为细粒度的操作，反之则困难得多。
 
-### Implementation of reusing mhlo custom call
+### 复用mhlo自定义调用的实现
 
-Reusing mhlo custom call with a ByteIR prefix in `call_target_name` can provide several benefits as follows,
-* the original IR is still legal and well-defined without introducing additional new dialect or defining new ops in tablegen;
-* it provides backward support for all existing passes or pattern-matching, not breaking anything;
-* with a proper definition, an unrecognized coarse-grained op can be eaisly mapping to a custom library or be decomposed into fine-grained ops.
+复用在call_target_name中带有ByteIR前缀的mhlo自定义算子可以提供以下几个好处：
+* 原始的中间表示仍然合法且定义明确，无需引入额外的新方言或在tablegen中定义新算子；
+* 它为所有现有的Pass或模式匹配提供向后支持，不会造成任何破坏；
+* 通过合适的定义，无法识别的粗粒度算子可以轻松映射到自定义库或分解为细粒度操作。
 
-### Implementation coarse-grained op conversion in frontends
+### 前端中实现粗粒度的算子转换
 
-Implementing coarse-grained op conversion in frontends can provide several benefits as follows,
-* it avoids N-to-1 rewriting happening in ByteIR compiler, and putting corresponding rewriting to each own frontend provides much cleaner implementation;
-* different frontends might already define their own dialect providing coarse-grained ops, making this conversion trivial and intuitive;
-* it isolates effects caused by existing frontends graph optimizations, which might change among different versions of each frontends.
+在前端实现粗粒度的算子转换可以提供以下几个好处，
+* 它避免了在 ByteIR 编译器中发生 N 对 1 的重写，将相应的重写放在每个自己的前端提供了更简洁的实现；
+* 不同的前端可能已经定义了自己的方言，提供粗粒度的操作，使得这种转换变得简单而直观；
+* 它隔离了现有前端图优化引起的影响，这些影响可能会在每个前端的不同版本之间发生变化。
 
 
-## Addtional op definition
+## 附加算子定义
 
-A coarse-grained op kind is defined through with a prefix. 
-
+粗粒度的算子类型是通过前缀定义的。
 ```call_target_name = "byteir.softmax" or "tf.DynamicPartition"```
+如果一个算子是跨前端通用的（这种情况大多发生），它将使用 byteir 前缀。
+如果一个算子是特定于某个前端的，它会使用特定前端的前缀，例如 tf 或 pytorch。
 
-If an op is generic across frontends, which happen mostly, it uses a `byteir` prefix.
-If an op is frontend-specific, it uses a frontend-specific prefix, such as `tf` or `pytorch`.
-
-Further needed information for a given coarse-grained op are encoded in a dictionary attribute, called `byteir_attrs`, which includes all named attributes. 
+对于给定粗粒度算子所需的进一步的信息被编码在一个名为 `byteir_attrs` 的字典属性中，该属性包括所有命名属性。
 
 ```Op Attribute: byteir_attrs = {approximate = "none"} or byteir_attrs = {} of if none```
 
 ### byteir.layer_norm
-- Operands:
+- 操作数:
   - input: Tensor
   - weight: Tensor
   - bias: Tensor
-- Attrs
+- 属性
   - epsilon: F64Attr
   - axis: I64ArrayAttr
   - eps_outside_sqrt: Optional\<BoolAttr>
-- Results(1 or 3):
-  - output: Tensor 
+- 结果(1 或 3):
+  - output: Tensor
   - mean: Optional\<Tensor>
   - inv_std_dev: Optional\<Tensor>
 
 ### byteir.l2_norm
-- Operands:
+- 操作数:
   - input: Tensor
-- Attrs
+- 属性
   - epsilon: F64Attr
   - axis: I64ArrayAttr
-- Results:
+- 结果:
   - output: Tensor
 
 ### byteir.softmax
-- Operands:
+- 操作数:
   - input: Tensor
-- Attrs
+- 属性
   - axis: I64Attr
-- Results:
+- 结果:
   - output: Tensor
-- Example:
+- 例子:
 ```
 %0 = "mhlo.custom_call"(%arg0) {api_version = 1 : i32, backend_config = "", byteir_attrs = {axis = 1 : i64}, call_target_name = "byteir.softmax", called_computations = [], has_side_effect = false} : (tensor<4x64xf32>) -> tensor<4x64xf32>
 ```
 
 ### byteir.log_softmax
-- Operands:
+- 操作数:
   - input: Tensor
-- Attrs
+- 属性
   - axis: I64Attr
 - Result:
   - output: Tensor
-- Example:
+- 例子:
 ```
 %0 = "mhlo.custom_call"(%arg0) {api_version = 1 : i32, backend_config = "", byteir_attrs = {axis = 1 : i64}, call_target_name = "byteir.log_softmax", called_computations = [], has_side_effect = false} : (tensor<4x64xf32>) -> tensor<4x64xf32>
 ```
 
 ### byteir.gelu
-- Operands:
+- 操作数:
   - input: Tensor
-- Attr:
+- 属性:
   - approximate: str
     - none / erf
     - tanh
-- Results:
+- 结果:
   - output: Tensor
-- Example:
+- 例子:
 ```
 %0 = "mhlo.custom_call"(%arg0) {api_version = 1 : i32, backend_config = "", byteir_attrs = {approximate = "none"}, call_target_name = "byteir.gelu", called_computations = [], has_side_effect = false} : (tensor<4x64xf32>) -> tensor<4x64xf32>
 ```
 
 ### byteir.arg_max/byteir.arg_min
-- Operands:
+- 操作数:
   - input: Tensor
-- Attrs
+- 属性
   - axis: I64Attr
   - keep_dims: BoolAttr
   - select_last_index: BoolAttr
-- Results:
+- 结果:
   - output: Optional\<Tensor>
-  - indices: IntTensor 
+  - indices: IntTensor
 
 
-### byteir.top_k 
-- Operands:
+### byteir.top_k
+- 操作数:
   - input: Tensor
-- Attrs
+- 属性
   - k: I64Attr
   - axis: I64ArrayAttr
   - sorted: BoolAttr
-- Results:
+- 结果:
   - output: Tensor
   - indices: IntTensor
 
-### byteir.erf 
-- Operands:
+### byteir.erf
+- 操作数:
   - input: Tensor
-- Results:
+- 结果:
   - output: Tensor
-- Example:
+- 例子:
 ```
 %0 = "mhlo.custom_call"(%arg0) {call_target_name = "byteir.erf", has_side_effect = false} : (tensor<?x64xf32>) -> tensor<?x64xf32>
 ```
 
 ### byteir.one_hot
-- Operands:
+- 操作数:
   - indices: IntTensor
-- Attrs:
+- 属性:
   - depth: I64Attr
   - axis: I64Attr
   - on_value: AnyAttr
   - off_value: AnyAttr
-- Results:
-  - output: Tensor (ElementType same as on_value and off_value)
+- 结果:
+  - output: Tensor (on_value 和 off_value 元素类型相同)
 
 ### byteir.quantize
-- Operands:
+- 操作数:
   - input: FloatTensor
-  - scale: FloatTensor (rank=0 for per-tensor quantization, or rank=1 for per-channel quantization)
-  - zero_point: Int8Tensor (shape same as scale)
-- Attrs
-  - axis: I64Attr (Optional, required only for per-channel quantization)
-- Results:
+  - scale: FloatTensor (对于 per-tensor 量化秩为0, 对于 per-channel 量化秩为1)
+  - zero_point: Int8Tensor (形状与 scale 相同)
+- 属性
+  - axis: I64Attr (可选, 只在per-channel 量化时必须)
+- 结果:
   - output: Int8Tensor
 
 ### byteir.dequantize
-- Operands:
+- 操作数:
   - input: Int8Tensor
-  - scale: FloatTensor (rank=0 for per-tensor dequantization, or rank=1 for per-channel dequantization)
-  - zero_point: Int8Tensor (shape same as scale)
-- Attrs
-  - axis: I64Attr (Optional, channel axis index, required only for per-channel dequantization)
-- Results:
+  - scale: FloatTensor (对于 per-tensor 量化秩为0, 对于 per-channel 量化秩为1)
+  - zero_point: Int8Tensor (形状与 scale 相同)
+- 属性
+  - axis: I64Attr (可选, 只在per-channel 量化时必须, channel 维的索引)
+- 结果:
   - output: FloatTensor
 
 ### byteir.resize
-- Operands:
+- 操作数:
   - input: Tensor
-  - target (scale/size): FloatTensor/IntTensor (respectively)
-- Attrs:
+  - target (scale/size): FloatTensor/IntTensor (对应)
+- 属性:
   - target_mode: StringAttr
     - `scale`
     - `size`
@@ -185,7 +182,7 @@ Further needed information for a given coarse-grained op are encoded in a dictio
     - `nearest`
     - `linear`
   - coordinate_transformation_mode: StringAttr
-    - Denote scale = length_resized / length_original, the transformation can be described as following.
+    - 将 scale 表示为 length_resized / length_original, 变换可以如下描述：
 
 | coordinate_transformation_mode | x_original = |
 | ------------------------------ | :----------  |
@@ -194,19 +191,19 @@ Further needed information for a given coarse-grained op are encoded in a dictio
 | `half_pixel` | (x_resized + 0.5) / scale - 0.5 |
 | `align_corners`| x_resized * (length_original - 1) / (length_resized - 1) |
 
-- Results:
+- 结果:
   - output: Tensor
 
 ### byteir.rng_uniform
-- Operands:
+- 操作数:
   - low: 0dTensor
   - high: 0dTensor
   - seed: 0dTensor
   - offset: 0dTensor
   - shape: Optional<1dTensor>
-- Results:
+- 结果:
   - out: Tensor
-- Example:
+- 例子:
 ```
 // Static Shape Case: out tensor must have static shape
 %high = mhlo.constant dense<1.000000e+00> : tensor<f32>

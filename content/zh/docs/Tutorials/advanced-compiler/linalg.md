@@ -1,89 +1,84 @@
 ---
-title: "Linalg Extension"
+title: "Linalg 扩展"
 date: 2022-06-09
 weight: 5
 keywords: ["Linalg", "MLIR"]
-description: 
+description:
 ---
 
-ByteIR compiler extends the MLIR linalg dialect to support several non-trivial patterns.
-ByteIR implements in a way of introducing a linalg-ext dialect on top of the existing linalg dialect.
-Ops and transformations in linalg-ext are expected to work interchangeably with existing ones in linalg, and expected to eventually be upstreamed to LLVM.
+ByteIR 编译器扩展了 MLIR linalg 方言，以支持多种非平凡的模式。
+ByteIR 以在现有 linalg 方言之上引入 linalg-ext 方言的方式实现。
+linalg-ext 中的操作和转换是期望能够与 linalg 中的现有操作和转换互换工作，并有望最终上传到 LLVM。
 
 
-## Rationales
+## 理由
 
-### Need of non-trivial patterns for linalg
+### 对于 linalg 非平凡模式的需要
 
-Several performance-critical patterns are still not covered well in the upstream linalg.
-Some of those patterns might not be easily expressible in the linalg dialect either through generic ops or even only relying on existing linalg interfaces. Top-k and Scan (cumsum) might belong to this category.
+上游的 linalg 仍然没有很好地覆盖几个性能关键的模式。
+有些模式可能无法通过通用算子或仅依赖现有的 linalg 接口在 linalg 方言中轻松表达。Top-k 和 Scan（cumsum）可能属于这一类。
+有些可能通过组合几个通用算子来表达，但由于缺乏适当的接口，可能会阻碍所需的转换。Softmax 属于这一类。
+有些旨在成为现有上游版本的更通用的替代品，`linalg_ext.batch_matmul` 属于这一类。
 
-Some might be expressible, through composing several generic ops, but might obstruct desired transformations due to lack of proper interfaces. Softmax belongs to this category.
+### 引入 linalg-ext 的实现
 
-Some aims to be a more versatile alternative to the existing upstream versions, `linalg_ext.batch_matmul` belongs to this category.
+引入 linalg-ext 可以提供以下几个好处，
 
-### Implementation of introducing linalg-ext
+- 它清楚地将算子或转换的扩展与现有的 linalg 分开，避免了误用。
+- 可以直观地解决需要引入接口的模式。
 
-Introducing linalg-ext can provide several benefits as follows,
+## 变换（Transformation）扩展
 
-- it clearly separate the extension of ops or transformations from the existing linalg, avoiding misusing.
-- it can intuitively resolve the patterns that require introducing interfaces.
+ByteIR linalg-ext 中增强或引入了几种变换。
 
-## Transformation Extension
+引入了 **_合并维度变换_**
 
-Several transformations are enhanced or introduced in ByteIR linalg-ext.
+- 来合并 linalg.generic 算子的维数。
 
-**_Collapse dims transformation_** is introduced
+引入了 **_消去单位长度维数变换_**
 
-- to collapse dimensions of linalg.generic operation
+- 来移除 Linalg 算子中单位长度的维数。
 
-**_Fold unit-extent dims transformation_** is introduced
+引入了 **_递降为循环变换_**
 
-- to remove unit-extent dimension in Linalg ops on tensors
+- 来将算子递降为循环。
 
-**_Lower to loops transformation_** is introduced
+引入了 **_Linalg 概括变换_**
 
-- to lower the operations to loops.
+- 将 linalg 算子概括为命名函数，其中 `libcall` 用于外部库调用。如果 `libcall` 设置为 False，则每个概述的函数都将具有唯一的名称，在这种情况下 `func_name` 只提供命名提示。否则，所有转换的函数调用都引用名为 `func_name` 的相同的外部函数。
 
-**_Linalg outline transformation_** is introduced
+引入了 **_分块标记变换_**
 
-- outline the linalg operation to a named function, where `libcall` for the external
-  library call. If `libcall` was set to False, every outlined function would have a
-  unique name , in this situation `func_name` just gives a naming hint. Otherwise,
-  all transformed function calls refer to the same external function named `func_name`.
+- 来通过属性表示循环类别 (并行或规约)。
 
-**_Tile label transformation_** is introduced
+注意这个分块标记变换也能够作用在现有的 linalg 分块和融合变换。
 
-- to indicate loop type (parallel or reduction) through attributes.
+引入了 **_共享输出的形式到分布式形式变换_**
 
-Note this tile label transformation also work with existing linalg tile and fuse transformation.
+- 将并行分块由共享输出的形式转到分布式形式。
 
-**_Shared output to distributed style transformation_** is introduced
+增强了 **_分块变换_**
 
-- convert parallel tiling from shared output style to distributed style.
+- 以支持 linalg-ext 算子。
 
-**_Tile transformation_** is enhanced
+增强了 **_融合变换_**
 
-- to support linalg-ext ops.
+- 以支持 linalg-ext 算子，
+- 来正确地支持沿着规约轴的分块，
+- 以支持在融合中将中间结果作为输出，
+- 以支持中间结果的张量的维度简化，
+- 以支持钻石型结构（if-else），
+- 以支持可选的 stop 属性，
+- 以支持与 tensor dialect 的融合。
 
-**_Fuse transformation_** is enhanced
+引入了 **_融合操作数变换_**
 
-- to support linalg-ext ops,
-- to correctly support tiling along a reduction axis,
-- to support intermediates as outputs within a fusion,
-- to support intermediate tensor dim simplification.
-- to support diamond structure
-- to support optional stop attribute
-- to support fusing together with tensor dialect
+- 以支持融合中多个根节点的情况，
+- 以支持检查 func 算子中的运算是否都被融合了。
 
-**_Fuse operands transformation_** is introduced
+注意，这个变换将会和融合变换合并起来。
 
-- to support multiple roots in fusion
-- to support check whether all the operations in the func op are fused together
-
-Note this transformation will be merged together with fuse transformation.
-
-Here shows the difference when tiling along a reduction axis.
+这里我们展示了沿着规约轴分块的不同。
 
 ```
 // input.mlir
@@ -131,7 +126,7 @@ func.func @tile_matmul(%arg0: tensor<128x128xf32>, %arg1: tensor<128x128xf32>) -
 
 ```
 
-Here shows the difference when there is an intermediate as as output.
+这里我们展示了当有一个中间结果作为输出时的不同。
 
 ```
 // input.mlir
@@ -186,9 +181,8 @@ func.func @fuse_element_static(%arg0: tensor<512x128xf32>, %arg1: tensor<512x128
 }
 ```
 
-Here shows the difference when tiling and fusing the resnet block.
-BTW, the upstream version runs very slowly when performing on a sequence of
-resnet blocks because some nodes are visited 2^N time, N is number of blocks.
+这里展示了分块和融合残差块时的不同。
+顺便说一句，上游版本在一系列残差块上执行非常慢，因为一些节点被访问了 2^N 次，N 是残差块的数量。
 
 ```
 // input.mlir
@@ -315,17 +309,17 @@ func.func @resnet_block(%arg0: tensor<1x56x56x256xf16>) -> tensor<1x56x56x256xf1
 
 ```
 
-Please refer [attention examples](../attention/) to understand the tiling and fusion capabilities of the FuseExt Op.
+请参考 [注意力的例子](../attention/) 来理解 FuseExt 算子分块和融合的能力。
 
-**_Elementwise fusion transformation_** is enhanced
+增强了 **_逐元素算子融合变换_**
 
-- to support intermediates as outputs within a fusion,
-- to support both producer-consumer fusion and input-sharing fusion,
-- to support intermediate tensor dim simplification,
-- to support map fusion by automatically converting map ops to generic ops.
-- to support indexing maps with constant result
+- 以支持融合内中间结果作为输出，
+- 以支持生产者消费者式的融合以及输入共享的融合，
+- 以支持中间张量的维数简化，
+- 通过自动将映射算子转为通用算子以支持映射融合，
+- 以支持具有常量结果的索引映射。
 
-Here shows the difference when there is an input-sharing fusion
+这里展示了具有输入共享的融合时的不同。
 
 ```
 // input.mlir
@@ -386,7 +380,7 @@ func.func @input_sharing(%arg0: tensor<?x?xf32>, %arg1: tensor<?x?xf32>, %arg2: 
 }
 ```
 
-Here shows the difference bewteen support of intermediate tensor dim simplification..
+这里展示了支持中间张量维数简化时的不同。
 
 ```
 // input.mlir
@@ -446,7 +440,7 @@ func.func @may_more_break_outs_dependency(%arg0: tensor<?x?xf32>) -> tensor<?x?x
 
 ```
 
-Here shows the difference bewteen support of indexing maps with constant result.
+这里展示了支持具有常量结果的索引映射时的不同。
 
 ```
 // input.mlir
@@ -514,102 +508,102 @@ func.func @constant_in_affine_map_with_collapse_shape(%arg0: tensor<1x256x1024xf
 }
 ```
 
-## Linalg-ext Op Extension
+## Linalg-ext 算子拓展
 
-### Alias Op
+### 别名算子 (Alias Op)
 
-Linalg-ext alias op is introduced as an auxiliary op to help input-sharing fusion.
-It happens internally within a pass, and typically in a generic op.
-It would not be eliminated in a canonicalizer, and it is only removed through `populateRemoveLinalgExtAliasPattern`.
-Note Alias op is not a structured op, and has no interface like `LoopIteratorType`.
+Linalg-ext 别名算子是作为辅助算子，帮助输入共享融合而引入的。
+它是在Pass内部产生的，并且通常是在通用算子内。
+它并不会因为标准化被消去，并且仅仅会因为调用 `populateRemoveLinalgExtAliasPattern` 被移除。
+注意：别名算子并不是一个结构化的算子, 并且没有像 `LoopIteratorType` 这样的接口。
 
-### Diag Op
+### 对角算子 (Diag Op)
 
-Linalg-ext diag op is introduced to present a diagonal matrix.
-It is a structured op, but currently only used as an output IR, often operating with a matmul.
-Depending on backends, a matmul with a diag op typically can be rewritten into
+Linalg-ext 对角算子是为了表示对角矩阵而引入的。
+它是一个结构化的算子，但是目前仅仅是用作输出的中间表示，通常与矩阵相乘算子一起使用。
+基于后端, 一个带有对角算子的矩阵相乘通常可以被重写成：
 
-1. a matmul with a reduced-load matrix
-2. a sparse matmul
-3. an elementwise mul with a broadcast
+1. 与一个减少了负载的矩阵的矩阵乘
+2. 一个稀疏的矩阵乘
+3. 一个带有广播的逐元素乘
 
-Spec:
+定义:
 
-- Operands:
-  - input: Tensor with a shape of N
-- Inits/Results:
-  - output: Tensor with a shape of N x N
+- 操作数:
+  - input （输入）: 形状为 N 的张量
+- 初始值/结果:
+  - output （输出）: 形状为 N x N 的张量
 
-### Scan Op
+### 遍历算子 (Scan Op)
 
-Linalg-ext scan op is introduced to present a scan, prefix sum, or `cumsum` pattern
-It is a structured op.
+Linalg-ext 遍历算子是为了表示遍历、前缀和、或者 `cumsum` 这样的模式，
+它是一个结构化的算子。
 
-Spec:
+定义:
 
-- Operands:
-  - input: Tensor with a dim of N
-- Attrs
-  - dimension: I64ArrayAttr
-  - inclusivie: BoolAttr
-- Inits/Results:
-  - output: Tensor with a dim of N
-  - accumulator: Tensor with a dim of N - 1
+- 操作数:
+  - input （输入）: 维数为 N 的张量
+- 属性:
+  - dimension （维数）: I64ArrayAttr
+  - inclusivie （是否包括当前值）: BoolAttr
+- 初始值/结果:
+  - output （输出）: 维数为 N 的张量
+  - accumulator （累积器）: 维数为 N - 1 的张量
 
-### Scatter Op
+### 索引更新算子 （Scatter Op）
 
-Linalg-ext scatter op is introduced to present a scatter pattern
-It is a structured op.
+Linalg-ext 索引更新算子是为了表示按照索引更新的模式，
+它是一个结构化的算子。
 
-Spec:
+定义:
 
-- Operands:
-  - indices: Tensor
-  - updates: Tensor
-- Inits/Results:
-  - src: Tensor
+- 操作数:
+  - indices （索引）: 张量
+  - updates （更新值）: 张量
+- 初始值/结果:
+  - src （源值）: 张量
 
-Here, the first `rank(indices) - 1` dimensions of `indices` and `update` are compatible.
-The last `rank(update) - rank(indices) + 1` dimensions of `update` and `src` are compatible.
-The last dimension of the indices, denoted as `dim(indices, rank(indices) - 1)`, should be static and the rank of `src` is equal to `dim(indices, rank(indices) - 1) + rank(update) - rank(indices) + 1`
+这里, `indices` 和 `update` 的前 `rank(indices) - 1` 个维度是匹配的。
+`update` 和 `src` 的后 `rank(update) - rank(indices) + 1` 个维度是匹配的。
+`indices` 的最后一维表示为 `dim(indices, rank(indices) - 1)`, 并且它应当是静态的。`src` 的秩等于 `dim(indices, rank(indices) - 1) + rank(update) - rank(indices) + 1`。
 
-### Softmax Op
+### 归一化指数函数算子（Softmax Op）
 
-Linalg-ext softmax op is introduced to present a softmax pattern
-It is a structured op.
+Linalg-ext softmax 算子是为了表示 softmax 模式，
+它是一个结构化的算子。
 
-Spec:
+定义:
 
-- Operands:
-  - input: Tensor with a dim of N
-- Attrs
-  - dimension: I64ArrayAttr
-- Inits/Results:
-  - output: Tensor with a dim of N, `output_result = exp(input - max_result) / accumulator_result`
-  - max: Tensor with a dim of N - 1, `max_result = max(max(input, dimension), max_init)`
-  - accumulator: Tensor with a dim of N - 1, `accumulator_result = accumulator_init * exp(max_init - max_result) + sum(exp(input - max_result), dimension)`
-  - scale: Tensor with a dim of N - 1, `scale_result = accumulator_init * exp(max_init - max_result) / accumulator_result`
+- 操作数:
+  - input （输入）: 维数为 N 的张量
+- 属性
+  - dimension （维数）: I64ArrayAttr
+- 初始值/结果:
+  - output （输出）: 维数为 N 的张量, `output_result = exp(input - max_result) / accumulator_result`
+  - max （最大值）: 维数为 N - 1 的张量, `max_result = max(max(input, dimension), max_init)`
+  - accumulator （累积器）: 维数为 N - 1 的张量, `accumulator_result = accumulator_init * exp(max_init - max_result) + sum(exp(input - max_result), dimension)`
+  - scale （标度）: 维数为 N - 1 的张量, `scale_result = accumulator_init * exp(max_init - max_result) / accumulator_result`
 
-Here, Operand `1`, max is defined as `max_result = max(max(input, dimension), max_init)`.
-Basically, it is a `reduce_max` of `input` along a dimension `dimension` with a initial value `max_init`.
-Operand `2`, accumulator is defined as `accumulator_result = accumulator_init * exp(max_init - max_result) + sum(exp(input - max_result), dimension)`
-Basically, it is a `reduce_sum` of `exp(input - max_result)` along a dimension `dimension` with a initial value `accumulator_init * exp(max_init - max_result)`.
-Operand `3`, scale is defined as `scale_result = accumulator_init * exp(max_init - max_result) / accumulator_result`.
-Finally, Operand `0`, output is defined as `output_result = exp(input - max_result) / accumulator_result`.
+在这里, 操作数 `1`, 最大值定义为 `max_result = max(max(input, dimension), max_init)`。
+基本上说, 它是对于 `input` 沿着维度 `dimension` 作初始值为 `max_init` 的 `reduce_max` 的结果。
+操作数 `2`, 累积器定义为 `accumulator_result = accumulator_init * exp(max_init - max_result) + sum(exp(input - max_result), dimension)`
+基本上说, 它是对于 `exp(input - max_result)` 沿着维度 `dimension` 作初始值为 `accumulator_init * exp(max_init - max_result)` 的 `reduce_sum` 的结果。
+操作数 `3`, 标度定义为 `scale_result = accumulator_init * exp(max_init - max_result) / accumulator_result`。
+最后, 操作数 `0`, 输出定义为 `output_result = exp(input - max_result) / accumulator_result`。
 
-### Topk Op
+### Topk 算子 （Topk Op）
 
-Linalg-ext topk op is introduced to present a topk pattern
-It is a structured op.
+Linalg-ext topk 算子是用来表示 topk 模式，
+它是一个结构化的算子。
 
-Spec:
+定义:
 
-- Operands:
-  - input_values: Tensor with a dim of N
-  - input_indices: Optional Tensor with a dim of N
-- Attrs
-  - dimension: I64ArrayAttr
-- Inits/Results:
-  - output_values: Tensor with a dim of N
-  - output_indices: Tensor with a dim of N
+- 操作数:
+  - 输入值（input_values）: 维数为 N 的张量
+  - 输入索引（input_indices）: 可选的维数为 N 的张量
+- 属性：
+  - 维度（dimension）: I64ArrayAttr
+- 初始值/结果:
+  - 输出值（output_values）: 维数为 N 的张量
+  - 输出索引（output_indices）: 维数为 N 的张量
 
