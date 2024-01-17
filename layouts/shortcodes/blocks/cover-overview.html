@@ -16,11 +16,11 @@
 <link rel="preload" as="image" href="{{ $promo_image_big.Permalink }}" media="(min-width: 1200px)">
 <style>
 #{{ $blockID }} {
-    background-image: url({{ $promo_image_small.Permalink }}); 
+    background-image: url({{ $promo_image_small.Permalink }});
 }
 @media only screen and (min-width: 1200px) {
     #{{ $blockID }} {
-        background-image: url({{ $promo_image_big.Permalink }}); 
+        background-image: url({{ $promo_image_big.Permalink }});
     }
 }
 </style>
@@ -39,7 +39,7 @@
             {{ end }}
           </p>
           <p class="home-overview-btn-group">
-            <a class="home-overview-btn" href="/docs">
+            <a class="home-overview-btn" href='{{ i18n "doc_url" }}'>
             <span class="home-overview-btn-bg"></span>
             {{ i18n "start" }} <i class="fas fa-arrow-alt-circle-right ml-2"></i>
             </a>

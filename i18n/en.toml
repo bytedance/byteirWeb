@@ -102,3 +102,6 @@ other = "Email"
 
 [welcome]
 other = "Welcome to"
+
+[doc_url]
+other = "/docs"
